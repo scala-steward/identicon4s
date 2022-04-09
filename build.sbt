@@ -6,7 +6,6 @@ ThisBuild / tlBaseVersion := "0.1"
 ThisBuild / scalaVersion := Scala213
 ThisBuild / crossScalaVersions := Seq(Scala213, Scala3)
 ThisBuild / licenses := Seq(License.Apache2)
-ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "net.michalp"
 ThisBuild / organizationName := "majk-p"
 ThisBuild / developers := List(
