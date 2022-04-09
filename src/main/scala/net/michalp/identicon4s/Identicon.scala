@@ -2,11 +2,8 @@ package net.michalp.identicon4s
 
 import cats.Applicative
 import cats.Functor
-import cats.Monad
-import cats.effect._
 import cats.implicits._
 
-import java.awt.image.BufferedImage
 import java.awt.image.RenderedImage
 import scala.util.Random
 
