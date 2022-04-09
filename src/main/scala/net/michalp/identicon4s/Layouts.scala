@@ -5,23 +5,24 @@ import cats.Applicative
 import scala.util.Random
 import cats.implicits._
 
-trait Layouts {
+private[identicon4s] trait Layouts {
   def randomLayout: Layouts.Layout
 }
 
-object Layouts {
+private[identicon4s] object Layouts {
 
   def instance(shapes: Shapes, random: Random): Layouts = new Layouts {
 
     override def randomLayout: Layout =
       random.nextInt().abs.toInt % 5 match {
-        case 0 => Layout.Diamond(shapes.randomShape, shapes.randomShape, shapes.randomShape, shapes.randomShape)
-        case 1 => Layout.Square(shapes.randomShape, shapes.randomShape, shapes.randomShape, shapes.randomShape)
-        case 2 => Layout.Triangle(shapes.randomShape, shapes.randomShape, shapes.randomShape)
-        case 3 =>
-          Layout.ShapeX(shapes.randomShape, shapes.randomShape, shapes.randomShape, shapes.randomShape, shapes.randomShape)
-        case 4 => Layout.Diagonal(shapes.randomShape, shapes.randomShape, shapes.randomShape)
+        case 0 => Layout.Diamond(nextShape, nextShape, nextShape, nextShape)
+        case 1 => Layout.Square(nextShape, nextShape, nextShape, nextShape)
+        case 2 => Layout.Triangle(nextShape, nextShape, nextShape)
+        case 3 => Layout.ShapeX(nextShape, nextShape, nextShape, nextShape, nextShape)
+        case 4 => Layout.Diagonal(nextShape, nextShape, nextShape)
       }
+
+    private def nextShape = shapes.randomShape
 
   }
 
@@ -57,7 +58,6 @@ object Layouts {
     /** Square layout
       * A      B
       *
-      * 
       * C      D
       */
     case class Square(a: Shape, b: Shape, c: Shape, d: Shape) extends Layout {
@@ -74,7 +74,6 @@ object Layouts {
     /** Triangle layout
       *     A
       *
-      * 
       * B       C
       */
     case class Triangle(a: Shape, b: Shape, c: Shape) extends Layout {
@@ -122,6 +121,7 @@ object Layouts {
       )
 
     }
+
   }
 
 }

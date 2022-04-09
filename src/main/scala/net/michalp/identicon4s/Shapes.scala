@@ -3,11 +3,11 @@ package net.michalp.identicon4s
 import cats.implicits._
 import scala.util.Random
 
-trait Shapes {
+private[identicon4s] trait Shapes {
   def randomShape: Shapes.Shape
 }
 
-object Shapes {
+private[identicon4s] object Shapes {
 
   def instance(random: Random) = new Shapes {
 
