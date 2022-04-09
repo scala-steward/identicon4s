@@ -1,10 +1,27 @@
+/*
+ * Copyright 2022 majk-p
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package net.michalp.identicon4s
 
-import Shapes.Shape
-import cats.Applicative
-import scala.util.Random
 import cats.implicits._
 import cats.kernel.Monoid
+
+import scala.util.Random
+
+import Shapes.Shape
 
 private[identicon4s] trait Layouts {
   def randomLayout: Layouts.Layout
@@ -16,8 +33,8 @@ private[identicon4s] object Layouts {
 
     override def randomLayout: Layout =
       List.fill(random.between(1, 4))(singleRandomLayout).combineAll
-    
-    private def singleRandomLayout: Layout = 
+
+    private def singleRandomLayout: Layout =
       random.nextInt().abs.toInt % 5 match {
         case 0 => Layout.Diamond(nextShape, nextShape, nextShape, nextShape)
         case 1 => Layout.Square(nextShape, nextShape, nextShape, nextShape)

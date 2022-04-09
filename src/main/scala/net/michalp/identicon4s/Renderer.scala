@@ -1,13 +1,23 @@
+/*
+ * Copyright 2022 majk-p
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package net.michalp.identicon4s
 
-import cats.Applicative
 import cats.data.Reader
 import cats.implicits._
-import net.michalp.identicon4s.Layouts.Layout.Diagonal
-import net.michalp.identicon4s.Layouts.Layout.Diamond
-import net.michalp.identicon4s.Layouts.Layout.ShapeX
-import net.michalp.identicon4s.Layouts.Layout.Square
-import net.michalp.identicon4s.Layouts.Layout.Triangle
 
 import java.awt.Color
 import java.awt.Graphics2D
@@ -22,6 +32,7 @@ private[identicon4s] trait Renderer {
 }
 
 private[identicon4s] object Renderer {
+
   def instance = new Renderer {
 
     override def render(layout: Layout): BufferedImage = {
@@ -52,11 +63,11 @@ private[identicon4s] object Renderer {
     private def renderShape(shape: Shape, x: Int, y: Int): GraphicsOp[Unit] = liftOp { g2d =>
       shape match {
         case Shape.Square(edgeSize) =>
-          g2d.fillRect(x, y, (edgeSize*width).toInt, (edgeSize*height).toInt)
+          g2d.fillRect(x, y, (edgeSize * width).toInt, (edgeSize * height).toInt)
         case Shape.Circle(radius)   =>
-          g2d.fillOval(x, y, (radius*width*2).toInt, (radius*height*2).toInt)
+          g2d.fillOval(x, y, (radius * width * 2).toInt, (radius * height * 2).toInt)
         case Shape.Triangle(edge)   =>
-          val triangle = trianglePolygon((edge*width).toInt, x, y)
+          val triangle = trianglePolygon((edge * width).toInt, x, y)
           g2d.fillPolygon(triangle)
       }
     }
