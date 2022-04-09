@@ -31,7 +31,6 @@ object Identicon {
         val layouts: Layouts = Layouts.instance(shapes, random)
         val renderer: Renderer = Renderer.instance
         val layout = layouts.randomLayout
-        println(s"Input: $input, layout: $layout")
         renderer.render(layout)
       }
 

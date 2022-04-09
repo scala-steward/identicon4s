@@ -4,6 +4,7 @@ import Shapes.Shape
 import cats.Applicative
 import scala.util.Random
 import cats.implicits._
+import cats.kernel.Monoid
 
 private[identicon4s] trait Layouts {
   def randomLayout: Layouts.Layout
@@ -14,6 +15,9 @@ private[identicon4s] object Layouts {
   def instance(shapes: Shapes, random: Random): Layouts = new Layouts {
 
     override def randomLayout: Layout =
+      List.fill(random.between(1, 4))(singleRandomLayout).combineAll
+    
+    private def singleRandomLayout: Layout = 
       random.nextInt().abs.toInt % 5 match {
         case 0 => Layout.Diamond(nextShape, nextShape, nextShape, nextShape)
         case 1 => Layout.Square(nextShape, nextShape, nextShape, nextShape)
@@ -26,12 +30,7 @@ private[identicon4s] object Layouts {
 
   }
 
-  final case class ShapeOnLayout(shape: Shape, xPercentage: Double, yPercentage: Double) {
-    assert(xPercentage >= 0 && xPercentage <= 1, "xPercentage must be between 0.0 and 1.0")
-    assert(yPercentage >= 0 && yPercentage <= 1, "yPercentage must be between 0.0 and 1.0")
-  }
-
-  sealed trait Layout extends Product with Serializable {
+  sealed trait Layout {
     val shapesOnLayout: Seq[ShapeOnLayout]
   }
 
@@ -44,11 +43,11 @@ private[identicon4s] object Layouts {
       *
       *     D
       */
-    case class Diamond(a: Shape, b: Shape, c: Shape, d: Shape) extends Layout {
+    final case class Diamond(a: Shape, b: Shape, c: Shape, d: Shape) extends Layout {
 
       override val shapesOnLayout: Seq[ShapeOnLayout] = Seq(
-        ShapeOnLayout(a, 0.5, 0.2),
-        ShapeOnLayout(b, 0.2, 0.5),
+        ShapeOnLayout(a, 0.5, 0.1),
+        ShapeOnLayout(b, 0.1, 0.5),
         ShapeOnLayout(c, 0.6, 0.5),
         ShapeOnLayout(d, 0.5, 0.6)
       )
@@ -60,12 +59,12 @@ private[identicon4s] object Layouts {
       *
       * C      D
       */
-    case class Square(a: Shape, b: Shape, c: Shape, d: Shape) extends Layout {
+    final case class Square(a: Shape, b: Shape, c: Shape, d: Shape) extends Layout {
 
       override val shapesOnLayout: Seq[ShapeOnLayout] = Seq(
-        ShapeOnLayout(a, 0.2, 0.2),
-        ShapeOnLayout(b, 0.2, 0.6),
-        ShapeOnLayout(c, 0.6, 0.2),
+        ShapeOnLayout(a, 0.1, 0.1),
+        ShapeOnLayout(b, 0.1, 0.6),
+        ShapeOnLayout(c, 0.6, 0.1),
         ShapeOnLayout(d, 0.6, 0.6)
       )
 
@@ -76,11 +75,11 @@ private[identicon4s] object Layouts {
       *
       * B       C
       */
-    case class Triangle(a: Shape, b: Shape, c: Shape) extends Layout {
+    final case class Triangle(a: Shape, b: Shape, c: Shape) extends Layout {
 
       override val shapesOnLayout: Seq[ShapeOnLayout] = Seq(
-        ShapeOnLayout(a, 0.5, 0.2),
-        ShapeOnLayout(b, 0.2, 0.6),
+        ShapeOnLayout(a, 0.5, 0.1),
+        ShapeOnLayout(b, 0.1, 0.6),
         ShapeOnLayout(c, 0.7, 0.6)
       )
 
@@ -93,12 +92,12 @@ private[identicon4s] object Layouts {
       *
       * C       D
       */
-    case class ShapeX(a: Shape, b: Shape, c: Shape, d: Shape, e: Shape) extends Layout {
+    final case class ShapeX(a: Shape, b: Shape, c: Shape, d: Shape, e: Shape) extends Layout {
 
       override val shapesOnLayout: Seq[ShapeOnLayout] = Seq(
-        ShapeOnLayout(a, 0.2, 0.2),
-        ShapeOnLayout(b, 0.2, 0.6),
-        ShapeOnLayout(c, 0.6, 0.2),
+        ShapeOnLayout(a, 0.1, 0.1),
+        ShapeOnLayout(b, 0.1, 0.6),
+        ShapeOnLayout(c, 0.6, 0.1),
         ShapeOnLayout(d, 0.6, 0.6),
         ShapeOnLayout(e, 0.4, 0.4)
       )
@@ -112,13 +111,34 @@ private[identicon4s] object Layouts {
       *
       *         C
       */
-    case class Diagonal(a: Shape, b: Shape, c: Shape) extends Layout {
+    final case class Diagonal(a: Shape, b: Shape, c: Shape) extends Layout {
 
       override val shapesOnLayout: Seq[ShapeOnLayout] = Seq(
-        ShapeOnLayout(a, 0.2, 0.2),
+        ShapeOnLayout(a, 0.1, 0.1),
         ShapeOnLayout(b, 0.4, 0.4),
         ShapeOnLayout(c, 0.6, 0.6)
       )
+
+    }
+
+    /** Empty layout to provide Monoid
+      */
+    case object Empty extends Layout {
+
+      override val shapesOnLayout: Seq[ShapeOnLayout] = Seq.empty
+
+    }
+
+    implicit val monoid: Monoid[Layout] = new Monoid[Layout] {
+
+      override def combine(x: Layout, y: Layout): Layout = new Layout {
+
+        override val shapesOnLayout: Seq[ShapeOnLayout] =
+          x.shapesOnLayout ++ y.shapesOnLayout
+
+      }
+
+      override def empty: Layout = Empty
 
     }
 

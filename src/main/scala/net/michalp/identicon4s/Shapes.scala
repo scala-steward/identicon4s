@@ -27,9 +27,9 @@ private[identicon4s] object Shapes {
   sealed trait Shape extends Product with Serializable
 
   object Shape {
-    case class Square(edgeLenght: Int) extends Shape
-    case class Circle(radius: Int) extends Shape
-    case class Triangle(edgeLenght: Int) extends Shape
+    final case class Square(edgeLenght: Int) extends Shape
+    final case class Circle(radius: Int) extends Shape
+    final case class Triangle(edgeLenght: Int) extends Shape
   }
 
 }
