@@ -13,5 +13,15 @@ Simple scala library for generating identicons - visual hashes for arbitrary str
 
 ## Usage
 
-TODO
+```scala
+import net.michalp.identicon4s.Identicon
+val identicon = Identicon.defaultInstance[Id]
 
+val image = identicon.generate("test")
+val f = new File(s"test.png");
+ImageIO.write(image, "png", f)
+```
+
+Resulting image
+
+![test.png](./images/test.png)

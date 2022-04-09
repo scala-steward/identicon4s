@@ -21,15 +21,15 @@ private[identicon4s] object Shapes {
     private def nextSize() = random.between(minSize, maxSize)
   }
 
-  private val minSize = 20
-  private val maxSize = 90
+  private val minSize = 0.05
+  private val maxSize = 0.15
 
   sealed trait Shape extends Product with Serializable
 
   object Shape {
-    final case class Square(edgeLenght: Int) extends Shape
-    final case class Circle(radius: Int) extends Shape
-    final case class Triangle(edgeLenght: Int) extends Shape
+    final case class Square(edgeLenghtRatio: Double) extends Shape
+    final case class Circle(radiusRatio: Double) extends Shape
+    final case class Triangle(edgeLenghtRatio: Double) extends Shape
   }
 
 }

@@ -9,7 +9,7 @@ object Demo extends App {
 
   def renderImage(identicon: Identicon[Id])(text: String) = {
     val image = identicon.generate(text)
-    val f = new File(s"./images/$text.png");
+    val f = new File(s"./output/$text.png");
     ImageIO.write(image, "png", f)
   }
 

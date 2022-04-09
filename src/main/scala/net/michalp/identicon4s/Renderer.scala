@@ -52,17 +52,17 @@ private[identicon4s] object Renderer {
     private def renderShape(shape: Shape, x: Int, y: Int): GraphicsOp[Unit] = liftOp { g2d =>
       shape match {
         case Shape.Square(edgeSize) =>
-          g2d.fillRect(x, y, edgeSize, edgeSize)
+          g2d.fillRect(x, y, (edgeSize*width).toInt, (edgeSize*height).toInt)
         case Shape.Circle(radius)   =>
-          g2d.fillOval(x, y, radius * 2, radius * 2)
+          g2d.fillOval(x, y, (radius*width*2).toInt, (radius*height*2).toInt)
         case Shape.Triangle(edge)   =>
-          val triangle = trianglePolygon(edge, x, y)
+          val triangle = trianglePolygon((edge*width).toInt, x, y)
           g2d.fillPolygon(triangle)
       }
     }
 
-    private val width = 512
-    private val height = 512
+    private val width = 256
+    private val height = 256
     private val squareRootOf3 = math.sqrt(3)
 
     private type GraphicsOp[A] = Reader[Graphics2D, A]
