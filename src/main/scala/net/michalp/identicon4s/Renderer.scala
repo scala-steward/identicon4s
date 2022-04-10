@@ -23,6 +23,7 @@ import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.Polygon
 import java.awt.image.BufferedImage
+import scala.util.Random
 
 import Layouts.Layout
 import Shapes.Shape
@@ -33,7 +34,7 @@ private[identicon4s] trait Renderer {
 
 private[identicon4s] object Renderer {
 
-  def instance = new Renderer {
+  def instance(config: Identicon.Config, random: Random) = new Renderer {
 
     override def render(layout: Layout): BufferedImage = {
       val buffImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
@@ -61,16 +62,37 @@ private[identicon4s] object Renderer {
       }
 
     private def renderShape(shape: Shape, x: Int, y: Int): GraphicsOp[Unit] = liftOp { g2d =>
+      g2d.setColor(nextColor)
       shape match {
-        case Shape.Square(edgeSize) =>
-          g2d.fillRect(x, y, (edgeSize * width).toInt, (edgeSize * height).toInt)
-        case Shape.Circle(radius)   =>
-          g2d.fillOval(x, y, (radius * width * 2).toInt, (radius * height * 2).toInt)
-        case Shape.Triangle(edge)   =>
-          val triangle = trianglePolygon((edge * width).toInt, x, y)
+        case Shape.Square(sizeRatio)   =>
+          val shapeWidth = (sizeRatio * width).toInt
+          val shapeHeight = (sizeRatio * height).toInt
+          g2d.fillRect(x - (shapeWidth / 2), y - (shapeHeight / 2), shapeWidth, shapeHeight)
+        case Shape.Circle(radiusRatio) =>
+          val radius = (radiusRatio * width).toInt
+          g2d.fillOval(x - radius, y - radius, radius * 2, radius * 2)
+        case Shape.Triangle(sizeRatio) =>
+          val triangle = trianglePolygon((sizeRatio * width).toInt, x, y)
           g2d.fillPolygon(triangle)
       }
+
     }
+
+    private def nextColor =
+      if (config.renderMonochromatic) Color.black
+      else
+        random
+          .shuffle(
+            Seq(
+              Color.red,
+              Color.green,
+              Color.blue,
+              Color.yellow,
+              Color.black,
+              Color.cyan
+            )
+          )
+          .head
 
     private val width = 256
     private val height = 256

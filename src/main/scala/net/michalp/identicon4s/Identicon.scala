@@ -30,22 +30,42 @@ trait Identicon[F[_]] {
 object Identicon {
   def apply[F[_]](implicit ev: Identicon[F]): Identicon[F] = ev
 
-  def defaultInstance[F[_]: Applicative] = {
+  def defaultInstance[F[_]: Applicative](config: Config = Config.default) = {
     implicit val hashing: Hashing[F] = Hashing.instance
-    instance[F]
+    instance[F](config)
   }
 
-  def instance[F[_]: Hashing: Functor] = new Identicon[F] {
+  def instance[F[_]: Hashing: Functor](config: Config) = new Identicon[F] {
 
     override def generate(input: String): F[RenderedImage] =
       Hashing[F].hash(input).map { seed =>
         val random = new Random(seed)
         val shapes: Shapes = Shapes.instance(random)
-        val layouts: Layouts = Layouts.instance(shapes, random)
-        val renderer: Renderer = Renderer.instance
+        val layouts: Layouts = Layouts.instance(shapes, random, config)
+        val renderer: Renderer = Renderer.instance(config, random)
         val layout = layouts.randomLayout
         renderer.render(layout)
       }
+
+  }
+
+  final case class Config(
+    minLayoutIterations: Int,
+    maxLayoutIterations: Int,
+    renderMonochromatic: Boolean
+  ) {
+    assert(minLayoutIterations >= 1, "At least one layout iteration required")
+    assert(maxLayoutIterations >= 1, "At least one layout iteration required")
+    assert(maxLayoutIterations > minLayoutIterations, "Minimal layout iterations has to be less than maximum")
+  }
+
+  object Config {
+
+    val default = Config(
+      minLayoutIterations = 1,
+      maxLayoutIterations = 3,
+      renderMonochromatic = true
+    )
 
   }
 

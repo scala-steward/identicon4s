@@ -21,7 +21,7 @@ import java.io.File
 import cats.Id
 
 object Demo extends App {
-  val identicon = Identicon.defaultInstance[Id]
+  val identicon = Identicon.defaultInstance[Id]()
 
   def renderImage(identicon: Identicon[Id])(text: String) = {
     val image = identicon.generate(text)

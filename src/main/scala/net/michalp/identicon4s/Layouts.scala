@@ -29,10 +29,17 @@ private[identicon4s] trait Layouts {
 
 private[identicon4s] object Layouts {
 
-  def instance(shapes: Shapes, random: Random): Layouts = new Layouts {
+  def instance(shapes: Shapes, random: Random, config: Identicon.Config): Layouts = new Layouts {
 
     override def randomLayout: Layout =
-      List.fill(random.between(1, 4))(singleRandomLayout).combineAll
+      List
+        .fill(
+          random.between(
+            config.minLayoutIterations,
+            config.maxLayoutIterations + 1
+          )
+        )(singleRandomLayout)
+        .combineAll
 
     private def singleRandomLayout: Layout =
       random.nextInt().abs.toInt % 5 match {
@@ -63,10 +70,10 @@ private[identicon4s] object Layouts {
     final case class Diamond(a: Shape, b: Shape, c: Shape, d: Shape) extends Layout {
 
       override val shapesOnLayout: Seq[ShapeOnLayout] = Seq(
-        ShapeOnLayout(a, 0.5, 0.1),
-        ShapeOnLayout(b, 0.1, 0.5),
-        ShapeOnLayout(c, 0.6, 0.5),
-        ShapeOnLayout(d, 0.5, 0.6)
+        ShapeOnLayout(a, 0.5, 0.2),
+        ShapeOnLayout(b, 0.2, 0.5),
+        ShapeOnLayout(c, 0.8, 0.5),
+        ShapeOnLayout(d, 0.5, 0.8)
       )
 
     }
@@ -79,10 +86,10 @@ private[identicon4s] object Layouts {
     final case class Square(a: Shape, b: Shape, c: Shape, d: Shape) extends Layout {
 
       override val shapesOnLayout: Seq[ShapeOnLayout] = Seq(
-        ShapeOnLayout(a, 0.1, 0.1),
-        ShapeOnLayout(b, 0.1, 0.6),
-        ShapeOnLayout(c, 0.6, 0.1),
-        ShapeOnLayout(d, 0.6, 0.6)
+        ShapeOnLayout(a, 0.2, 0.2),
+        ShapeOnLayout(b, 0.2, 0.8),
+        ShapeOnLayout(c, 0.8, 0.2),
+        ShapeOnLayout(d, 0.8, 0.8)
       )
 
     }
@@ -95,9 +102,9 @@ private[identicon4s] object Layouts {
     final case class Triangle(a: Shape, b: Shape, c: Shape) extends Layout {
 
       override val shapesOnLayout: Seq[ShapeOnLayout] = Seq(
-        ShapeOnLayout(a, 0.5, 0.1),
-        ShapeOnLayout(b, 0.1, 0.6),
-        ShapeOnLayout(c, 0.7, 0.6)
+        ShapeOnLayout(a, 0.5, 0.2),
+        ShapeOnLayout(b, 0.1, 0.8),
+        ShapeOnLayout(c, 0.9, 0.8)
       )
 
     }
@@ -112,10 +119,10 @@ private[identicon4s] object Layouts {
     final case class ShapeX(a: Shape, b: Shape, c: Shape, d: Shape, e: Shape) extends Layout {
 
       override val shapesOnLayout: Seq[ShapeOnLayout] = Seq(
-        ShapeOnLayout(a, 0.1, 0.1),
-        ShapeOnLayout(b, 0.1, 0.6),
-        ShapeOnLayout(c, 0.6, 0.1),
-        ShapeOnLayout(d, 0.6, 0.6),
+        ShapeOnLayout(a, 0.2, 0.2),
+        ShapeOnLayout(b, 0.2, 0.8),
+        ShapeOnLayout(c, 0.8, 0.2),
+        ShapeOnLayout(d, 0.8, 0.8),
         ShapeOnLayout(e, 0.4, 0.4)
       )
 
@@ -131,9 +138,9 @@ private[identicon4s] object Layouts {
     final case class Diagonal(a: Shape, b: Shape, c: Shape) extends Layout {
 
       override val shapesOnLayout: Seq[ShapeOnLayout] = Seq(
-        ShapeOnLayout(a, 0.1, 0.1),
-        ShapeOnLayout(b, 0.4, 0.4),
-        ShapeOnLayout(c, 0.6, 0.6)
+        ShapeOnLayout(a, 0.2, 0.2),
+        ShapeOnLayout(b, 0.5, 0.5),
+        ShapeOnLayout(c, 0.8, 0.8)
       )
 
     }
