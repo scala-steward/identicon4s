@@ -25,13 +25,12 @@ import cats.effect.IOApp
 object Demo extends IOApp.Simple {
   val identicon = Identicon.defaultInstance[IO]()
 
-  def renderImage(identicon: Identicon[IO])(text: String) = 
-    identicon.generate(text).map { image => 
+  def renderImage(identicon: Identicon[IO])(text: String) =
+    identicon.generate(text).map { image =>
       val f = new File(s"./output/$text.png")
       ImageIO.write(image, "png", f)
     }
-  
 
-  def run = 
+  def run =
     Seq("test", "lorem", "ipsum", "dolor", "99999").traverse_(renderImage(identicon))
 }
