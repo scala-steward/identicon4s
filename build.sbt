@@ -1,5 +1,5 @@
 val Scala213 = "2.13.8"
-val Scala3 = "3.1.1"
+val Scala3 = "3.1.2"
 
 ThisBuild / tlBaseVersion := "0.0"
 
