@@ -18,16 +18,20 @@ package net.michalp.identicon4s
 
 import javax.imageio.ImageIO
 import java.io.File
-import cats.Id
+import cats.effect.IO
+import cats.implicits._
+import cats.effect.IOApp
 
-object Demo extends App {
-  val identicon = Identicon.defaultInstance[Id]()
+object Demo extends IOApp.Simple {
+  val identicon = Identicon.defaultInstance[IO]()
 
-  def renderImage(identicon: Identicon[Id])(text: String) = {
-    val image = identicon.generate(text)
-    val f = new File(s"./output/$text.png");
-    ImageIO.write(image, "png", f)
-  }
+  def renderImage(identicon: Identicon[IO])(text: String) = 
+    identicon.generate(text).map { image => 
+      val f = new File(s"./output/$text.png")
+      ImageIO.write(image, "png", f)
+    }
+  
 
-  Seq("test", "lorem", "ipsum", "dolor", "99999").foreach(renderImage(identicon))
+  def run = 
+    Seq("test", "lorem", "ipsum", "dolor", "99999").traverse_(renderImage(identicon))
 }

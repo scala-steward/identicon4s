@@ -16,12 +16,11 @@
 
 package net.michalp.identicon4s
 
-import cats.Applicative
-import cats.Functor
+import cats.effect.kernel.Sync
+import cats.effect.std.Random
 import cats.implicits._
 
 import java.awt.image.RenderedImage
-import scala.util.Random
 
 trait Identicon[F[_]] {
   def generate(input: String): F[RenderedImage]
@@ -30,22 +29,30 @@ trait Identicon[F[_]] {
 object Identicon {
   def apply[F[_]](implicit ev: Identicon[F]): Identicon[F] = ev
 
-  def defaultInstance[F[_]: Applicative](config: Config = Config.default) = {
+  def defaultInstance[F[_]: Sync](config: Config = Config.default) = {
     implicit val hashing: Hashing[F] = Hashing.instance
     instance[F](config)
   }
 
-  def instance[F[_]: Hashing: Functor](config: Config) = new Identicon[F] {
+  def instance[F[_]: Hashing: Sync](config: Config) = new Identicon[F] {
 
     override def generate(input: String): F[RenderedImage] =
-      Hashing[F].hash(input).map { seed =>
-        val random = new Random(seed)
-        val shapes: Shapes = Shapes.instance(random)
-        val layouts: Layouts = Layouts.instance(shapes, random, config)
-        val renderer: Renderer = Renderer.instance(config, random)
-        val layout = layouts.randomLayout
-        renderer.render(layout)
-      }
+      Hashing[F]
+        .hash(input)
+        .flatMap { seed =>
+          Random.scalaUtilRandomSeedLong[F](seed).flatMap { implicit random =>
+            val shapes: Shapes[F] = Shapes.instance[F]
+            val layouts: Layouts[F] = Layouts.instance(config)
+            val renderer: Renderer[F] = Renderer.instance(config)
+
+            for {
+              layout            <- layouts.randomLayout
+              shapesStream = shapes.randomShapes
+              shapesOnPositions <- layout.objectPositions.zip(shapesStream).traverse(t => t._2.map(ShapeOnLayout(_, t._1)))
+              rendered          <- renderer.render(shapesOnPositions.toList)
+            } yield rendered
+          }
+        }
 
   }
 

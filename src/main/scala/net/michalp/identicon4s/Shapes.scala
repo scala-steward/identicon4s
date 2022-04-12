@@ -16,24 +16,32 @@
 
 package net.michalp.identicon4s
 
-import scala.util.Random
+import cats.Monad
+import cats.effect.std.Random
+import cats.implicits._
 
-private[identicon4s] trait Shapes {
-  def randomShape: Shapes.Shape
+private[identicon4s] trait Shapes[F[_]] {
+  def randomShape: F[Shapes.Shape]
+  def randomShapes: LazyList[F[Shapes.Shape]]
 }
 
 private[identicon4s] object Shapes {
 
-  def instance(random: Random) = new Shapes {
+  def instance[F[_]: Random: Monad] = new Shapes[F] {
 
-    override def randomShape: Shape =
-      random.nextInt().abs.toInt % 3 match {
-        case 0 => Shape.Square(nextSize())
-        case 1 => Shape.Circle(nextSize())
-        case 2 => Shape.Triangle(nextSize())
+    override def randomShapes: LazyList[F[Shape]] = LazyList.continually(randomShape)
+
+    override def randomShape: F[Shape] =
+      for {
+        randInt <- Random[F].nextInt.map(_.abs.toInt)
+        size    <- nextSize
+      } yield randInt % 3 match {
+        case 0 => Shape.Square(size)
+        case 1 => Shape.Circle(size)
+        case 2 => Shape.Triangle(size)
       }
 
-    private def nextSize() = random.between(minSize, maxSize)
+    private def nextSize: F[Double] = Random[F].betweenDouble(minSize, maxSize)
   }
 
   private val minSize = 0.05

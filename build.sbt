@@ -28,6 +28,7 @@ val compilerOptions = Seq(
 
 val Versions = new {
   val Cats = "2.7.0"
+  val CatsEffect = "3.3.11"
 }
 
 val Dependencies = new {
@@ -36,8 +37,12 @@ val Dependencies = new {
     "org.typelevel" %% "cats-core" % Versions.Cats
   )
 
+  private val catsEffect = Seq(
+    "org.typelevel" %% "cats-effect" % Versions.CatsEffect
+  )
+
   val appDependencies =
-    cats
+    cats ++ catsEffect
 }
 
 lazy val root = (project in file("."))

@@ -19,11 +19,12 @@ The most basic use case is covered by the `defaultInstance`.
 
 ```scala
 import net.michalp.identicon4s.Identicon
-val identicon = Identicon.defaultInstance[Id]()
+val identicon = Identicon.defaultInstance[IO]()
 
-val image = identicon.generate("test")
-val f = new File(s"test.png");
-ImageIO.write(image, "png", f)
+val image = identicon.generate("test").map{
+  val f = new File(s"test.png")
+  ImageIO.write(image, "png", f)
+}.unsafeRunSync()
 ```
 
 Resulting image
@@ -35,21 +36,22 @@ Resulting image
 Identicon is configurable. You can tune the amount of layout selection iterations and turn on the coloring.
 
 ```scala
+import net.michalp.identicon4s.Identicon
 val config = Identicon.Config(
   minLayoutIterations = 5,
   maxLayoutIterations = 10,
   renderMonochromatic = false
 )
-import net.michalp.identicon4s.Identicon
-val identicon = Identicon.defaultInstance[Id](config)
+val identicon = Identicon.defaultInstance[IO](config)
 
-val image = identicon.generate("test")
-val f = new File(s"test.png");
-ImageIO.write(image, "png", f)
+val image = identicon.generate("test"){
+  val f = new File(s"test.png")
+  ImageIO.write(image, "png", f)
+}.unsafeRunSync()
 ```
 
 Resulting image
 
 ![test-color.png](./images/test-color.png)
 
-There's also `def instance[F[_]: Hashing: Functor](config: Config)` method that allows you to instantiate `Identicon` with custom your own implementation of `Hashing`.
+There's also `def instance[F[_]: Hashing: Sync](config: Config)` method that allows you to instantiate `Identicon` with custom your own implementation of `Hashing`.

@@ -27,7 +27,7 @@ object Hashing {
 
   def instance[F[_]: Applicative] = new Hashing[F] {
     def hash(input: String): F[Long] =
-      Applicative[F].pure(input.hashCode())
+      Applicative[F].pure(input.hashCode().toLong)
   }
 
 }
