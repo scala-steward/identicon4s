@@ -65,7 +65,7 @@ private[identicon4s] object Layouts {
       *
       *     D
       */
-    final case object Diamond extends Layout {
+    case object Diamond extends Layout {
 
       override val objectPositions: Seq[RelativePosition] = Seq(
         RelativePosition(0.5, 0.2),
@@ -81,7 +81,7 @@ private[identicon4s] object Layouts {
       *
       * C      D
       */
-    final case object Square extends Layout {
+    case object Square extends Layout {
 
       override val objectPositions: Seq[RelativePosition] = Seq(
         RelativePosition(0.2, 0.2),
@@ -97,7 +97,7 @@ private[identicon4s] object Layouts {
       *
       * B       C
       */
-    final case object Triangle extends Layout {
+    case object Triangle extends Layout {
 
       override val objectPositions: Seq[RelativePosition] = Seq(
         RelativePosition(0.5, 0.2),
@@ -114,7 +114,7 @@ private[identicon4s] object Layouts {
       *
       * C       D
       */
-    final case object ShapeX extends Layout {
+    case object ShapeX extends Layout {
 
       override val objectPositions: Seq[RelativePosition] = Seq(
         RelativePosition(0.2, 0.2),
@@ -133,7 +133,7 @@ private[identicon4s] object Layouts {
       *
       *         C
       */
-    final case object Diagonal extends Layout {
+    case object Diagonal extends Layout {
 
       override val objectPositions: Seq[RelativePosition] = Seq(
         RelativePosition(0.2, 0.2),
