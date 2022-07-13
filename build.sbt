@@ -28,7 +28,7 @@ val compilerOptions = Seq(
 
 val Versions = new {
   val Cats = "2.7.0"
-  val CatsEffect = "3.3.13"
+  val CatsEffect = "3.3.14"
 }
 
 val Dependencies = new {
